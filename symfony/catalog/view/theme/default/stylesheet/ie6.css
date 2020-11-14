@@ -1,0 +1,28 @@
+.main,
+.content                                                { overflow: hidden; zoom: 1; }
+.content                                                { width: 735px;}
+.button_red                                             { background-color: #DA1B14 !important; }
+.header .right_info                                     { position: relative; z-index: 100; }
+.header .feedback_links                                 { width: 155px; }
+.header .right_info .search_box                         { left: 20px !important; }
+.header .right_info .search_box .search .search_t .search_button    { top: 0px !important; }
+.header .nav                                            { zoom: 1;}
+.header .right_info .top_contact .schedule              { top: 0px;}
+.header .right_info .top_contact .contact               { float: left;}
+.header .right_info .top_contact .contact div           { float: left;}
+.main .column_left .nav_list .item .name                { background: #ededed url(../image/check.png) no-repeat 5px 50%; }
+.header .right_info .search_box .search .search_t,
+.main .cart,
+.main .column_left .filter_price,
+.product_page .product_top .info,
+.order_page .cart_products,
+.order_page .delivery_link #msg                         { border: 1px solid #e0e0e0 !important; }
+.main .column_left .filter_price .filter_button         { margin-top: 40px; }
+.main .product_page .cart                               { top: -10px !important; border-style: none !important; }
+.order_page .delivery_link                              { z-index: 1000; }
+.main .column_left .filter_price,
+.main .column_left .filter_price .slider,
+.product_page .product_top .product,
+.product_page .product_top .product .tab_box            { zoom: 1; }
+.product_page .product_top .product .product_info .params table { width: 335px !important; }
+.price_block .button_green_list                         { padding-bottom: 6px;}

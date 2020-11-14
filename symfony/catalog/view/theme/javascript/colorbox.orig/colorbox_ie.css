@@ -1,0 +1,10 @@
+/* IE */
+#cboxTopLeft{width:25px; height:25px; background:url(images/border1_ie.png) 0 0 no-repeat; }
+#cboxTopCenter{height:25px; background:url(images/border1_ie.png) 0 -50px repeat-x;}
+#cboxTopRight{width:25px; height:25px; background:url(images/border1_ie.png) -25px 0 no-repeat;}
+#cboxBottomLeft{width:25px; height:25px; background:url(images/border1_ie.png) 0 -25px no-repeat;}
+#cboxBottomCenter{height:25px; background:url(images/border1_ie.png) 0 -75px repeat-x;}
+#cboxBottomRight{width:25px; height:25px; background:url(images/border1_ie.png) -25px -25px no-repeat;}
+#cboxMiddleLeft{width:25px; background:url(images/border2_ie.png) 0 0 repeat-y;}
+#cboxMiddleRight{width:25px; background:url(images/border2_ie.png) -25px 0 repeat-y;}
+/* ie*/

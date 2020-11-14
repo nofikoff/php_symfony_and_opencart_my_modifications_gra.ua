@@ -1,0 +1,21 @@
+form#cart {
+    float: right;
+}
+form#cart .cart_products {
+    width: 100% !important;
+}
+.order_page > form {
+    float: right;
+}
+.symple_order .order_contact {
+  margin-left: 0%;
+  width: 50%;
+}
+.order_page .order_contact .order_info input,
+.order_page .order_contact .order_info textarea {
+  width: 96%;
+}
+.comment-order-block {
+    width: 50%;
+    float: left;
+}

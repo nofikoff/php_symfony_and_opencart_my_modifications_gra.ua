@@ -1,0 +1,76 @@
+#suggest_container{
+    text-align: left; cursor: default; border: 1px solid #ccc; border-top: 0; background: #fff; box-shadow: -1px 1px 3px rgba(0,0,0,.1);
+	position: absolute; display: none; z-index: 9999; overflow: hidden; overflow-y: auto; box-sizing: border-box;
+}
+#suggest_container ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#suggest_container ul > li {
+    margin: 0;
+    padding: 7px 15px;
+    border-bottom: 1px solid #ccc;
+	overflow: hidden;
+}
+
+#suggest_container ul > li.sugg_hovered:hover {
+	 color: #111;
+	 background: #eee;
+}
+
+
+#suggest_container ul > li:last-child { 
+    border-bottom: 0px;
+}
+
+#suggest_container ul > li > a {
+    font-size: 13px;
+    color: #333;
+    line-height: 18px;
+	display: block;
+	text-decoration: none;
+}
+#suggest_container ul > li > a > span {
+	display: block;
+}
+.sugg_image {
+    margin-right: 17px;
+    float: left;
+    margin-top: 3px;
+}
+.sugg_text {
+	/*margin-left: 10px;*/
+	text-overflow: ellipsis; /* Добавляем многоточие */
+	overflow: hidden; /* Обрезаем все, что не помещается в область */
+	white-space: nowrap; /* Запрещаем перенос строк */
+}
+.sugg_manufacturer {
+	float: left;
+    margin-right: 10px;
+    font-weight: bold;
+}
+.sugg_sku {
+	color: #086ca2;
+    font-weight: 500;
+}
+.sugg_total {
+    margin-left: 3px;
+    font-size: 10px;
+    border-radius: 3px;
+    color: #337ab7;
+    padding: 1px 4px;
+    font-weight: bold;
+    border-color: #337ab7;
+}
+.suggest_header {
+	border-bottom: 1px solid #ccc;
+	margin: 0;
+    padding: 7px 15px;
+	font-size: 11px;
+}
+.sugg_suggested_text {
+	font-weight: bold;
+    font-style: italic;
+    color: #dd4b39;
+}

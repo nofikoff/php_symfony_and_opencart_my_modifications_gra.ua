@@ -1,0 +1,224 @@
+<?php
+
+class ControllerCommonHeader extends Controller {
+
+    protected function index() {
+
+        if(isset($this->session->data['ga_order_info'])) {
+            $this->data['ga_order_infos'] = $this->session->data['ga_order_info'];
+            unset($this->session->data['ga_order_info']);                
+        }
+		$_SESSION['widget_switcher'] = $this->getWidgetSwitcherValue();
+        $cart_products = $this->cart->getProducts();
+        $_SESSION['widget_cart_products'] = json_encode(array_map("strval", array_keys($cart_products)));
+
+        $this->load->model('tool/seo_url');
+
+        $this->data['callback_href'] = $this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=information/callback');
+        $this->data['callback_tittle'] = 'Перезвонить мне';
+
+        $this->data['wish_list_href'] = $this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=product/wish_list');
+        $this->load->helper('russian');
+        $this->data['wish_count'] = (isset($this->session->data['wish_list']) ? count($this->session->data['wish_list']) : 0) . ' ' . Russian::howMany(isset($this->session->data['wish_list']) ? count($this->session->data['wish_list']) : 0, 'товар', 'товара', 'товаров');
+
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && isset($this->request->post['language_code'])) {
+            $this->session->data['language'] = $this->request->post['language_code'];
+
+            if (isset($this->request->post['redirect'])) {
+                $this->redirect($this->request->post['redirect']);
+            } else {
+                $this->redirect($this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=common/home'));
+            }
+        }
+
+        if (($this->request->server['REQUEST_METHOD'] == 'POST') && isset($this->request->post['currency_code'])) {
+            $this->currency->set($this->request->post['currency_code']);
+
+            unset($this->session->data['shipping_methods']);
+            unset($this->session->data['shipping_method']);
+
+            if (isset($this->request->post['redirect'])) {
+                $this->redirect($this->request->post['redirect']);
+            } else {
+                $this->redirect($this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=common/home'));
+            }
+        }
+
+        $this->language->load('common/header');
+
+        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+            $server = HTTPS_IMAGE;
+        } else {
+            $server = HTTP_IMAGE;
+        }
+
+        $this->data['title'] = $this->document->title ? $this->document->title : $this->language->get('title');
+        $this->data['description'] = $this->document->description ? $this->document->description : $this->language->get('meta_description');
+        $this->data['keywords'] = $this->document->keywords ? $this->document->keywords : $this->language->get('meta_keywords');
+        $this->data['template'] = $this->config->get('config_template');
+        $this->data['special'] = $this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=product/special');
+
+        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
+            $this->data['base'] = HTTPS_SERVER;
+        } else {
+            $this->data['base'] = HTTP_SERVER;
+        }
+
+        if ($this->config->get('config_icon') && file_exists(DIR_IMAGE . $this->config->get('config_icon'))) {
+            $this->data['icon'] = $server . $this->config->get('config_icon');
+        } else {
+            $this->data['icon'] = '';
+        }
+
+        $this->data['charset'] = $this->language->get('charset');
+        $this->data['lang'] = $this->language->get('code');
+        $this->data['direction'] = $this->language->get('direction');
+        $this->data['links'] = $this->document->links;
+        $this->data['styles'] = $this->document->styles;
+        $this->data['scripts'] = $this->document->scripts;
+
+        $this->data['store'] = $this->config->get('config_name');
+
+
+        if (!$this->config->get('config_store_id')) {
+            $this->data['top_contact'] = html_entity_decode($this->config->get('config_top_contact_' . $this->config->get('config_language_id')), ENT_QUOTES, 'UTF-8');
+        } else {
+            $store_info = $this->model_setting_store->getStore($this->config->get('config_store_id'));
+
+            if ($store_info) {
+                $this->data['top_contact'] = html_entity_decode($store_info['description'], ENT_QUOTES, 'UTF-8');
+            } else {
+                $this->data['top_contact'] = '';
+            }
+        }
+
+
+        $this->data['text_special'] = $this->language->get('text_special');
+        $this->data['button_go'] = $this->language->get('button_go');
+
+
+        $this->data['action'] = $this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=common/home');
+
+
+        // Categories menu
+        $this->load->model('tool/seo_url');
+        $this->load->model('catalog/category');
+
+        // active category
+        if (isset($this->request->get['path']) && $this->request->get['path']) {
+            $path = explode('_', $this->request->get['path']);
+            $this->data['active_category'] = $path[0];
+        }
+        else
+            $this->data['active_category'] = 0;
+
+//by Novikov COSTYL
+
+if (isset($_GET['novikov'])) {
+	$results = $this->getCategories(0);
+	$fh = fopen('./cache-catalog-dont-move.txt', "w");
+        fwrite($fh, json_encode($results));
+	fclose($fh);
+	$this->data['categories'] = $results;
+
+} else {
+	$this->data['categories'] = json_decode(file_get_contents('./cache-catalog-dont-move.txt'),true);
+}	
+	
+//original		    
+//        $results = $this->getCategories(0);
+//        $this->data['categories'] = $results;
+        
+        
+
+        $this->load->model('catalog/product');
+        $this->data['budget'] = array();
+        $min_max = $this->model_catalog_product->getMinMaxProductsBudget();
+        if ($min_max) {
+            $this->data['min_budget'] = $min_max['min'];
+            $this->data['max_budget'] = $min_max['max'];
+        } else {
+            $this->data['min_budget'] = 0;
+            $this->data['max_budget'] = 0;
+        }
+
+
+        $this->children = array(
+            'module/information',
+            'module/google_analytics',
+            'common/breadcrumb',
+            'module/google_talk',
+            'module/cart'
+        );
+        $this->id = 'header';
+
+
+
+        if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/common/header.tpl')) {
+            $this->template = $this->config->get('config_template') . '/template/common/header.tpl';
+        } else {
+            $this->template = 'default/template/common/header.tpl';
+        }
+
+        $this->render();
+    }
+
+    private function getCategories($parent_id, $level = 0, $path = '') {
+        $level++;
+        $data = array();
+
+        $results = $this->model_catalog_category->getCategories($parent_id);
+
+        if ($path)
+            $path .= '_';
+
+        foreach ($results as $key => $item) {
+            $item_path = $path . $item['category_id'];
+            $data[$key] = array(
+                'name' => $item['name'],
+                'column_count' => $item['column_count'],
+                'category_id' => $item['category_id'],
+                'href' => $this->model_tool_seo_url->rewrite(HTTP_SERVER . 'index.php?route=product/category&path=' . $item_path),
+            );
+
+            if ($level < 4) {
+                $data[$key]['sub'] = $this->getCategories($item['category_id'], $level, $item_path);
+            }
+        }
+
+        return $data;
+    }
+	// DataProm start
+    private function getFurtherFlagValue($val = null) {
+        $val = is_null($val) ? rand(0,1) : intval($val);
+        return ($val == 0) ? 1 : 0;
+    }
+
+    private function defineWidgetSwitcher() {
+		return 0;
+        if (file_exists(WIDGET_FLAG_PATH)) {
+            $flag = file_get_contents(WIDGET_FLAG_PATH);
+            $fp = fopen(WIDGET_FLAG_PATH, "w");
+            $flagUpdated = $this->getFurtherFlagValue($flag);
+            fwrite($fp, $flagUpdated);
+        } else {
+            $fp = fopen(WIDGET_FLAG_PATH, "w");
+            $flagUpdated = $this->getFurtherFlagValue();
+            fwrite($fp, $flagUpdated);
+        }
+        fclose($fp);
+        return $flagUpdated;
+    }
+
+    private function getWidgetSwitcherValue() {
+        if (!isset($_COOKIE["widget_flag"])) {
+            $val = $this->defineWidgetSwitcher();
+            setcookie("widget_flag", $val, strtotime("+30 days"), "/");
+        }
+        return intval($_COOKIE["widget_flag"]);
+    }
+	// DataProm end
+
+}
+
+?>
